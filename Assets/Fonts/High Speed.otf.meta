@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: fd38805a9daeef647987ca165d8ddd25
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: High Speed
+  fontNames:
+  - High Speed
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 264620b415f9c85419d1e1fd2b20162f, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
