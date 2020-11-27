@@ -4,8 +4,16 @@ using UnityEngine;
 
 public class RegisterController : MonoBehaviour
 {
+    public GameObject main;
     public GameObject step1;
     public GameObject step2;
+
+    public void CallRegisterStep1()
+    {
+        main.SetActive(false);
+        step1.SetActive(true);
+        step2.SetActive(false);
+    }
 
    public void CallRegisterStep2()
    {
