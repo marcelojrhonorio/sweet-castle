@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/SweetCastle.unity
+    guid: 57869ff47367ca54bbfec1652f3a3874
   m_configObjects: {}
