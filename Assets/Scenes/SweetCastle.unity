@@ -872,6 +872,11 @@ PrefabInstance:
       propertyPath: m_Color.a
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7122925082458423435, guid: cb855a91215775541b7495f45698f960,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -141
+      objectReference: {fileID: 0}
     - target: {fileID: 7122925083124652424, guid: cb855a91215775541b7495f45698f960,
         type: 3}
       propertyPath: m_Name
@@ -992,6 +997,16 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1154359025}
+    - target: {fileID: 7122925083249011690, guid: cb855a91215775541b7495f45698f960,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -145
+      objectReference: {fileID: 0}
+    - target: {fileID: 7122925083249011690, guid: cb855a91215775541b7495f45698f960,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -40
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb855a91215775541b7495f45698f960, type: 3}
 --- !u!1001 &1782040621714207334
