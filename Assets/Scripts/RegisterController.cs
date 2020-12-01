@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Firebase;
@@ -17,6 +17,15 @@ public class RegisterController : MonoBehaviour
     [Header("Register")]
     public TMP_InputField userName;
     public TMP_InputField castleName;
+    public TMP_InputField email;
+    public TMP_InputField password;
+    public TMP_InputField passwordConfirmation;
+    public string gender;
+
+    //Steps variables
+    public GameObject main;
+    public GameObject step1;
+    public GameObject step2;
 
      void Awake()
     {
@@ -44,13 +53,18 @@ public class RegisterController : MonoBehaviour
     }
 
      //Function for the register button
-    public void RegisterButton()
+    public void RegisterStep1()
     {
         //Call the register coroutine passing the email, password, and username
         //StartCoroutine(Register(userName.text, castleName.text));
-        
+ 
         Debug.Log(userName.text);
         Debug.Log(castleName.text);
+        Debug.Log(gender);
+
+        //go to step 2
+        step1.SetActive(false);
+        step2.SetActive(true);
     }
 
    /* private IEnumerator Register(string userName, string castleName)
@@ -139,7 +153,46 @@ public class RegisterController : MonoBehaviour
     }
 */
 
+    public void RegisterStep2()
+    {
+        Debug.Log(email.text);
+        Debug.Log(password.text);
+        Debug.Log(passwordConfirmation.text);
 
+        if(password.text != passwordConfirmation.text) 
+        {
+            Debug.Log("As senhas não correspondem!");
+            return;
+        }
+
+        //go to step 2
+        step1.SetActive(false);
+        step2.SetActive(false);
+        main.SetActive(true);
+    }
+
+    public void GenderKing()
+    {
+        gender = "king";
+    }
+
+    public void GenderQueen()
+    {
+        gender = "queen";
+    }
+
+    public void CallRegisterStep1()
+    {
+        main.SetActive(false);
+        step1.SetActive(true);
+        step2.SetActive(false);
+    }
+
+   public void CallRegisterStep2()
+   {
+       step1.SetActive(false);
+       step2.SetActive(true);
+   }
 
     
 }
