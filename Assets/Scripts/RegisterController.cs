@@ -4,6 +4,7 @@ using UnityEngine;
 using Firebase;
 using Firebase.Auth;
 using TMPro;
+using Firebase.Database;
 
 public class RegisterController : MonoBehaviour
 {
@@ -52,15 +53,25 @@ public class RegisterController : MonoBehaviour
         auth = FirebaseAuth.DefaultInstance;
     }
 
+    DatabaseReference reference;
+
      //Function for the register button
     public void RegisterStep1()
     {
         //Call the register coroutine passing the email, password, and username
         //StartCoroutine(Register(userName.text, castleName.text));
+
+        //reference = FirebaseDatabase.DefaultInstance.RootReference;
+
+        //Firebase.Database.Query data = FirebaseDatabase.DefaultInstance
+        //    .GetReference("users").EqualTo(userName.text);
+        //reference.Child("users").Child(userId).SetRawJsonValueAsync(json);
+
+        //Debug.Log(data);
  
-        Debug.Log(userName.text);
-        Debug.Log(castleName.text);
-        Debug.Log(gender);
+        //Debug.Log(userName.text);
+        //Debug.Log(castleName.text);
+        //Debug.Log(gender);
 
         //go to step 2
         step1.SetActive(false);
