@@ -61,13 +61,27 @@ public class RegisterController : MonoBehaviour
         //Call the register coroutine passing the email, password, and username
         //StartCoroutine(Register(userName.text, castleName.text));
 
-        //reference = FirebaseDatabase.DefaultInstance.RootReference;
 
-        //Firebase.Database.Query data = FirebaseDatabase.DefaultInstance
-        //    .GetReference("users").EqualTo(userName.text);
+
+
+
+        //reference = FirebaseDatabase.DefaultInstance.RootReference;
         //reference.Child("users").Child(userId).SetRawJsonValueAsync(json);
 
+        //FirebaseDatabase.DefaultInstance
+        //    .GetReference("users").EqualTo(userName.text).ValueChanged += HandleValueChanged;
+
+        FirebaseDatabase.DefaultInstance.GetReference("users").OrderByChild("username").EqualTo(userName.text).ValueChanged += HandleValueChanged;
+        //FirebaseDatabase.DefaultInstance.GetReference("users").OrderByChild("username").ValueChanged += HandleValueChanged;
+   
+            
         //Debug.Log(data);
+
+        //var ref = FirebaseDatabase.DefaultInstance.GetReference("users");
+
+        //ref.ChildAdded += HandleChildAdded;
+
+        //Debug.Log(ref);
  
         //Debug.Log(userName.text);
         //Debug.Log(castleName.text);
@@ -76,6 +90,42 @@ public class RegisterController : MonoBehaviour
         //go to step 2
         step1.SetActive(false);
         step2.SetActive(true);
+    }
+
+    void HandleValueChanged(object sender, ValueChangedEventArgs args) {
+      if (args.DatabaseError != null) {
+        Debug.LogError(args.DatabaseError.Message);
+        return;
+      }
+      // Do something with the data in args.Snapshot
+        Debug.Log(args.Snapshot);
+        
+        Debug.Log(args.Snapshot.Child("users"));
+        //Debug.Log(args.Snapshot.Child("username").Value);
+
+        /*
+    
+      var highscoreobject = args.Snapshot.Value as Dictionary<string, System.Object>;
+           //Debug.Log(args.Snapshot);
+          
+           
+           foreach (var item in highscoreobject)
+            {
+                //string userScore = "";
+                //Debug.Log(item.Key); // Kdq6...
+
+
+                /*var values = item.Value as Dictionary<string, System.Object>;
+                //Debug.Log(values);
+                var list = item.ToList();
+                list.Sort();
+                foreach (var v in values)
+                {
+                    Debug.Log(v.Key + ":" + v.Value); // category:livingroom, code:126 ...
+                                //userScore += v.Value;
+                }
+                
+            }*/
     }
 
    /* private IEnumerator Register(string userName, string castleName)
