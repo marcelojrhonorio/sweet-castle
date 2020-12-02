@@ -20,13 +20,16 @@ public class RegisterController : MonoBehaviour
     public TMP_InputField castleName;
     public TMP_InputField email;
     public TMP_InputField password;
-    public TMP_InputField passwordConfirmation;
-    public string gender;
+    public TMP_InputField passwordConfirmation;   
 
     //Steps variables
     public GameObject main;
     public GameObject step1;
     public GameObject step2;
+
+    public string userNameString;
+    public string castleNameString;
+    public string gender;
 
      void Awake()
     {
@@ -53,180 +56,63 @@ public class RegisterController : MonoBehaviour
         auth = FirebaseAuth.DefaultInstance;
     }
 
-    DatabaseReference reference;
-
-     //Function for the register button
+    //Function for the register button
     public void RegisterStep1()
+    {        
+        if("" == userName.text || "" == castleName.text || "" == gender)
+        {
+            //mostrar erro ao usuário
+            Debug.Log("Todos os campos são obrigários");
+            return;
+        }
+
+        userNameString = userName.text;
+        castleNameString = castleName.text;
+
+        FirebaseDatabase.DefaultInstance.GetReference("users").OrderByChild("username").EqualTo(userName.text).ValueChanged += HandleValueChanged;                
+    }
+
+    void HandleValueChanged(object sender, ValueChangedEventArgs args) 
     {
-        //Call the register coroutine passing the email, password, and username
-        //StartCoroutine(Register(userName.text, castleName.text));
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            return;
+        }            
+    
+        var result = args.Snapshot.Value as Dictionary<string, System.Object>;          
+           
+        foreach (var item in result)
+        {
+            if("" != item.Key) 
+            {
+                //mostrar erro ao usuário
+                Debug.Log("Tem key! Não pode cadastrar. " + item.Key);
+                return;
+            }      
+        }
 
-
-
-
-
-        //reference = FirebaseDatabase.DefaultInstance.RootReference;
-        //reference.Child("users").Child(userId).SetRawJsonValueAsync(json);
-
-        //FirebaseDatabase.DefaultInstance
-        //    .GetReference("users").EqualTo(userName.text).ValueChanged += HandleValueChanged;
-
-        FirebaseDatabase.DefaultInstance.GetReference("users").OrderByChild("username").EqualTo(userName.text).ValueChanged += HandleValueChanged;
-        //FirebaseDatabase.DefaultInstance.GetReference("users").OrderByChild("username").ValueChanged += HandleValueChanged;
-   
-            
-        //Debug.Log(data);
-
-        //var ref = FirebaseDatabase.DefaultInstance.GetReference("users");
-
-        //ref.ChildAdded += HandleChildAdded;
-
-        //Debug.Log(ref);
- 
-        //Debug.Log(userName.text);
-        //Debug.Log(castleName.text);
-        //Debug.Log(gender);
-
-        //go to step 2
+        //go to step two
         step1.SetActive(false);
         step2.SetActive(true);
     }
 
-    void HandleValueChanged(object sender, ValueChangedEventArgs args) {
-      if (args.DatabaseError != null) {
-        Debug.LogError(args.DatabaseError.Message);
-        return;
-      }
-      // Do something with the data in args.Snapshot
-        Debug.Log(args.Snapshot);
-        
-        Debug.Log(args.Snapshot.Child("users"));
-        //Debug.Log(args.Snapshot.Child("username").Value);
-
-        /*
-    
-      var highscoreobject = args.Snapshot.Value as Dictionary<string, System.Object>;
-           //Debug.Log(args.Snapshot);
-          
-           
-           foreach (var item in highscoreobject)
-            {
-                //string userScore = "";
-                //Debug.Log(item.Key); // Kdq6...
-
-
-                /*var values = item.Value as Dictionary<string, System.Object>;
-                //Debug.Log(values);
-                var list = item.ToList();
-                list.Sort();
-                foreach (var v in values)
-                {
-                    Debug.Log(v.Key + ":" + v.Value); // category:livingroom, code:126 ...
-                                //userScore += v.Value;
-                }
-                
-            }*/
-    }
-
-   /* private IEnumerator Register(string userName, string castleName)
-    {
-        Debug.Log(userName);
-        Debug.Log(castleName);
-        
-        if (_username == "")
-        {
-            //If the username field is blank show a warning
-            //warningRegisterText.text = "Missing Username";
-        }
-        else if(passwordRegisterField.text != passwordRegisterVerifyField.text)
-        {
-            //If the password does not match show a warning
-            //warningRegisterText.text = "Password Does Not Match!";
-        }
-         else 
-        {
-            //Call the Firebase auth signin function passing the email and password
-            var RegisterTask = auth.CreateUserWithEmailAndPasswordAsync(_email, _password);
-            //Wait until the task completes
-            yield return new WaitUntil(predicate: () => RegisterTask.IsCompleted);
-
-            if (RegisterTask.Exception != null)
-            {
-                //If there are errors handle them
-                Debug.LogWarning(message: $"Failed to register task with {RegisterTask.Exception}");
-                FirebaseException firebaseEx = RegisterTask.Exception.GetBaseException() as FirebaseException;
-                AuthError errorCode = (AuthError)firebaseEx.ErrorCode;
-
-                string message = "Register Failed!";
-                switch (errorCode)
-                {
-                    case AuthError.MissingEmail:
-                        message = "Missing Email";
-                        break;
-                    case AuthError.MissingPassword:
-                        message = "Missing Password";
-                        break;
-                    case AuthError.WeakPassword:
-                        message = "Weak Password";
-                        break;
-                    case AuthError.EmailAlreadyInUse:
-                        message = "Email Already In Use";
-                        break;
-                }
-                //warningRegisterText.text = message;
-            }
-            else
-            {
-                //User has now been created
-                //Now get the result
-                User = RegisterTask.Result;
-
-                if (User != null)
-                {
-                    //Create a user profile and set the username
-                    UserProfile profile = new UserProfile{DisplayName = _username};
-
-                    //Call the Firebase auth update user profile function passing the profile with the username
-                    var ProfileTask = User.UpdateUserProfileAsync(profile);
-                    //Wait until the task completes
-                    yield return new WaitUntil(predicate: () => ProfileTask.IsCompleted);
-
-                    if (ProfileTask.Exception != null)
-                    {
-                        //If there are errors handle them
-                        Debug.LogWarning(message: $"Failed to register task with {ProfileTask.Exception}");
-                        FirebaseException firebaseEx = ProfileTask.Exception.GetBaseException() as FirebaseException;
-                        AuthError errorCode = (AuthError)firebaseEx.ErrorCode;
-                        //warningRegisterText.text = "Username Set Failed!";
-                    }
-                    else
-                    {
-                        //Username is now set
-                        //Now return to login screen
-                        
-                        //UIManager.instance.LoginScreen();
-                        //warningRegisterText.text = "";
-                    }
-                }
-            }
-        }
-        
-    }
-*/
-
     public void RegisterStep2()
-    {
-        Debug.Log(email.text);
-        Debug.Log(password.text);
-        Debug.Log(passwordConfirmation.text);
-
+    {   
         if(password.text != passwordConfirmation.text) 
         {
+            //mostrar erro ao usuário
             Debug.Log("As senhas não correspondem!");
             return;
         }
 
-        //go to step 2
+        Debug.Log(email.text);
+        Debug.Log(password.text);
+        Debug.Log(passwordConfirmation.text);
+
+        Debug.Log(userNameString);
+        Debug.Log(castleNameString);
+        Debug.Log(gender); 
+
         step1.SetActive(false);
         step2.SetActive(false);
         main.SetActive(true);
