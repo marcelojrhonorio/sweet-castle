@@ -61,13 +61,13 @@ public class RegisterController : MonoBehaviour
         //Call the register coroutine passing the email, password, and username
         //StartCoroutine(Register(userName.text, castleName.text));
 
-        reference = FirebaseDatabase.DefaultInstance.RootReference;
+        //reference = FirebaseDatabase.DefaultInstance.RootReference;
 
-        string data = FirebaseDatabase.DefaultInstance
-            .GetReference("users").EqualTo(userName.text);
+        //Firebase.Database.Query data = FirebaseDatabase.DefaultInstance
+        //    .GetReference("users").EqualTo(userName.text);
         //reference.Child("users").Child(userId).SetRawJsonValueAsync(json);
 
-        Debug.Log(data);
+        //Debug.Log(data);
  
         //Debug.Log(userName.text);
         //Debug.Log(castleName.text);
