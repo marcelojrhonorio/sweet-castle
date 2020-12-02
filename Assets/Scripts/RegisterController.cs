@@ -68,13 +68,17 @@ public class RegisterController : MonoBehaviour
     //Function for the register button
     public void RegisterStep1()
     {
-        
+        alert.SetActive(false);
+
         if ("" == userName.text || "" == castleName.text || "" == gender)
         {
             //mostrar erro ao usuário
-            Debug.Log("Todos os campos são obrigários");
+            alert.SetActive(true);
+            alertMessage.text = "Todos os campos são obrigatórios!";
             return;
         }
+
+        alert.SetActive(false);
 
         userNameString = userName.text;
         castleNameString = castleName.text;
