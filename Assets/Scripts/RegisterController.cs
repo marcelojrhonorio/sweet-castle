@@ -27,6 +27,15 @@ public class RegisterController : MonoBehaviour
     public GameObject step1;
     public GameObject step2;
 
+    //Gender Buttons
+    public GameObject kingPressedButton;
+    public GameObject queenPressedButton;
+    public GameObject kingUnpressedButton;
+    public GameObject queenUnpressedButton;
+
+    public GameObject alert;
+    public TMP_Text alertMessage;
+
     public string userNameString;
     public string castleNameString;
     public string gender;
@@ -58,8 +67,9 @@ public class RegisterController : MonoBehaviour
 
     //Function for the register button
     public void RegisterStep1()
-    {        
-        if("" == userName.text || "" == castleName.text || "" == gender)
+    {
+        
+        if ("" == userName.text || "" == castleName.text || "" == gender)
         {
             //mostrar erro ao usuário
             Debug.Log("Todos os campos são obrigários");
@@ -69,7 +79,8 @@ public class RegisterController : MonoBehaviour
         userNameString = userName.text;
         castleNameString = castleName.text;
 
-        FirebaseDatabase.DefaultInstance.GetReference("users").OrderByChild("username").EqualTo(userName.text).ValueChanged += HandleValueChanged;                
+        FirebaseDatabase.DefaultInstance.GetReference("users").OrderByChild("username").EqualTo(userName.text).ValueChanged += HandleValueChanged; 
+        
     }
 
     void HandleValueChanged(object sender, ValueChangedEventArgs args) 
@@ -83,13 +94,19 @@ public class RegisterController : MonoBehaviour
            
         foreach (var item in result)
         {
-            if("" != item.Key) 
+            alert.SetActive(false);
+
+            if ("" != item.Key) 
             {
                 //mostrar erro ao usuário
-                Debug.Log("Tem key! Não pode cadastrar. " + item.Key);
+                //Debug.Log("Tem key! Não pode cadastrar. " + item.Key);
+                alert.SetActive(true);
+                alertMessage.text = "Já existe um usuário com esse nome!";
                 return;
-            }      
+            }
         }
+
+        alert.SetActive(false);
 
         //go to step two
         step1.SetActive(false);
@@ -120,13 +137,45 @@ public class RegisterController : MonoBehaviour
 
     public void GenderKing()
     {
+        kingUnpressedButton.SetActive(false);
+        kingPressedButton.SetActive(true);
+
+        queenPressedButton.SetActive(false);
+        queenUnpressedButton.SetActive(true);
         gender = "king";
     }
 
     public void GenderQueen()
     {
+        queenUnpressedButton.SetActive(false);
+        queenPressedButton.SetActive(true);
+
+        kingPressedButton.SetActive(false);
+        kingUnpressedButton.SetActive(true);
         gender = "queen";
     }
+
+    public void GenderKingPressed()
+    {
+        kingUnpressedButton.SetActive(false);
+        kingPressedButton.SetActive(true);
+
+        queenPressedButton.SetActive(false);
+        queenUnpressedButton.SetActive(true);
+        gender = "king";
+    }
+
+    public void GenderQueenPressed()
+    {
+        queenUnpressedButton.SetActive(false);
+        queenPressedButton.SetActive(true);
+
+        kingPressedButton.SetActive(false);
+        kingUnpressedButton.SetActive(true);
+
+        gender = "queen";
+    }
+
 
     public void CallRegisterStep1()
     {
@@ -135,11 +184,16 @@ public class RegisterController : MonoBehaviour
         step2.SetActive(false);
     }
 
-   public void CallRegisterStep2()
-   {
-       step1.SetActive(false);
-       step2.SetActive(true);
-   }
+    public void CallRegisterStep2()
+    {
+        step1.SetActive(false);
+        step2.SetActive(true);
+    }
+
+    public void CloseAlert()
+    {
+        alert.SetActive(false);
+    }
 
     
 }
