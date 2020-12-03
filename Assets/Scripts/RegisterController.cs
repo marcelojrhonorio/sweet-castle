@@ -1,18 +1,44 @@
-﻿ using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Firebase;
 using Firebase.Auth;
 using TMPro;
 using Firebase.Database;
+using System.Security.Cryptography;
+using System;
 
 public class RegisterController : MonoBehaviour
 {
+    public class Usuario 
+    {
+        public string email;
+        public string username;
+        public string castlename;
+        public string password;
+        public string gender;
+
+        public Usuario()
+        {
+
+        }
+
+        public Usuario(string email, string username, string castlename, string password, string gender)
+        {
+            this.email = email;
+            this.username = username;
+            this.castlename = castlename;
+            this.password = password;
+            this.gender = gender;
+        }
+    }
+
     //Firebase variables
     [Header("Firebase")]
     public DependencyStatus dependencyStatus;
     public FirebaseAuth auth;    
     public FirebaseUser User;
+    DatabaseReference reference;
 
     //Register variables
     [Header("Register")]
@@ -62,7 +88,7 @@ public class RegisterController : MonoBehaviour
     {
         Debug.Log("Setting up Firebase Auth");
         //Set the authentication instance object
-        auth = FirebaseAuth.DefaultInstance;
+        auth = FirebaseAuth.DefaultInstance;       
     }
 
     //Function for the register button
@@ -92,21 +118,25 @@ public class RegisterController : MonoBehaviour
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             return;
-        }            
-    
-        var result = args.Snapshot.Value as Dictionary<string, System.Object>;          
-           
-        foreach (var item in result)
-        {
-            alert.SetActive(false);
+        }        
+                
+        var result = args.Snapshot.Value as Dictionary<string, System.Object>;
 
-            if ("" != item.Key) 
+        Debug.Log(result.Count);    
+
+        if(result.Count != 0)
+        {
+            foreach (var item in result)
             {
-                //mostrar erro ao usuário
-                //Debug.Log("Tem key! Não pode cadastrar. " + item.Key);
-                alert.SetActive(true);
-                alertMessage.text = "Já existe um usuário com esse nome!";
-                return;
+                alert.SetActive(false);
+
+                if ("" != item.Key) 
+                {
+                    //mostrar erro ao usuário
+                    alert.SetActive(true);
+                    alertMessage.text = "Já existe um usuário com esse nome!";
+                    return;
+                }
             }
         }
 
@@ -118,21 +148,42 @@ public class RegisterController : MonoBehaviour
     }
 
     public void RegisterStep2()
-    {   
+    {  
         if(password.text != passwordConfirmation.text) 
         {
             //mostrar erro ao usuário
             Debug.Log("As senhas não correspondem!");
             return;
-        }
+        }   
 
-        Debug.Log(email.text);
-        Debug.Log(password.text);
-        Debug.Log(passwordConfirmation.text);
+        //random hash generator
+        RNGCryptoServiceProvider rngCryptoServiceProvider = new RNGCryptoServiceProvider();
+        byte[] randomBytes = new byte[40];
+        rngCryptoServiceProvider.GetBytes(randomBytes);
+        var userId = System.Convert.ToBase64String(randomBytes);  
+      
+        //Create the salt value with a cryptographic PRNG
+        byte[] salt;
+        new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]); 
+        
+        //Create the Rfc2898DeriveBytes and get the hash value
+        var pbkdf2 = new Rfc2898DeriveBytes(password.text, salt, 100000);
+        byte[] hash = pbkdf2.GetBytes(20);
 
-        Debug.Log(userNameString);
-        Debug.Log(castleNameString);
-        Debug.Log(gender); 
+        //Combine the salt and password bytes for later use
+        byte[] hashBytes = new byte[36];
+        Array.Copy(salt, 0, hashBytes, 0, 16);
+        Array.Copy(hash, 0, hashBytes, 16, 20);
+        
+        //Turn the combined salt+hash into a string 
+        string savedPasswordHash = System.Convert.ToBase64String(hashBytes);    
+
+        Usuario usuario = new Usuario(email.text, userNameString, castleNameString, savedPasswordHash, gender); 
+        string json = JsonUtility.ToJson(usuario);
+
+        reference = FirebaseDatabase.DefaultInstance.RootReference;  
+
+        reference.Child("users").Child(userId).SetRawJsonValueAsync(json);
 
         step1.SetActive(false);
         step2.SetActive(false);
@@ -179,7 +230,6 @@ public class RegisterController : MonoBehaviour
 
         gender = "queen";
     }
-
 
     public void CallRegisterStep1()
     {
