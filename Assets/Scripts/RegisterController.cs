@@ -9,30 +9,7 @@ using System.Security.Cryptography;
 using System;
 
 public class RegisterController : MonoBehaviour
-{
-    public class Usuario 
-    {
-        public string email;
-        public string username;
-        public string castlename;
-        public string password;
-        public string gender;
-
-        public Usuario()
-        {
-
-        }
-
-        public Usuario(string email, string username, string castlename, string password, string gender)
-        {
-            this.email = email;
-            this.username = username;
-            this.castlename = castlename;
-            this.password = password;
-            this.gender = gender;
-        }
-    }
-
+{    
     //Firebase variables
     [Header("Firebase")]
     public DependencyStatus dependencyStatus;
@@ -98,6 +75,7 @@ public class RegisterController : MonoBehaviour
 
         if ("" == userName.text || "" == castleName.text || "" == gender)
         {
+            Debug.Log("aquiiiiiii");
             //mostrar erro ao usuário
             alert.SetActive(true);
             alertMessage.text = "Todos os campos são obrigatórios!";
@@ -122,10 +100,12 @@ public class RegisterController : MonoBehaviour
                 
         var result = args.Snapshot.Value as Dictionary<string, System.Object>;
 
-        Debug.Log(result.Count);    
+        Debug.Log(result.Count);          
 
         if(result.Count != 0)
-        {
+        {  
+            alert.SetActive(false);
+
             foreach (var item in result)
             {
                 alert.SetActive(false);
@@ -164,7 +144,8 @@ public class RegisterController : MonoBehaviour
       
         //Create the salt value with a cryptographic PRNG
         byte[] salt;
-        new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]); 
+        //new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]); 
+        rngCryptoServiceProvider.GetBytes(salt = new byte[16]); 
         
         //Create the Rfc2898DeriveBytes and get the hash value
         var pbkdf2 = new Rfc2898DeriveBytes(password.text, salt, 100000);
@@ -178,7 +159,7 @@ public class RegisterController : MonoBehaviour
         //Turn the combined salt+hash into a string 
         string savedPasswordHash = System.Convert.ToBase64String(hashBytes);    
 
-        Usuario usuario = new Usuario(email.text, userNameString, castleNameString, savedPasswordHash, gender); 
+        User usuario = new User(email.text, userNameString, castleNameString, savedPasswordHash, gender); 
         string json = JsonUtility.ToJson(usuario);
 
         reference = FirebaseDatabase.DefaultInstance.RootReference;  
