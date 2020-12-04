@@ -11,10 +11,10 @@ using System;
 public class RegisterController : MonoBehaviour
 {    
     //Firebase variables
-    [Header("Firebase")]
+   /* [Header("Firebase")]
     public DependencyStatus dependencyStatus;
     public FirebaseAuth auth;    
-    public FirebaseUser User;
+    public FirebaseUser User;*/
     DatabaseReference reference;
 
     //Register variables
@@ -30,43 +30,12 @@ public class RegisterController : MonoBehaviour
     public GameObject step1;
     public GameObject step2;
 
-    //Gender Buttons
-    public GameObject kingPressedButton;
-    public GameObject queenPressedButton;
-    public GameObject kingUnpressedButton;
-    public GameObject queenUnpressedButton;
-
     public GameObject alert;
     public TMP_Text alertMessage;
 
     public string userNameString;
     public string castleNameString;
     public string gender;
-
-     void Awake()
-    {
-        //Check that all of the necessary dependencies for Firebase are present on the system
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
-        {
-            dependencyStatus = task.Result;
-            if (dependencyStatus == DependencyStatus.Available)
-            {
-                //If they are avalible Initialize Firebase
-                InitializeFirebase();
-            }
-            else
-            {
-                Debug.LogError("Could not resolve all Firebase dependencies: " + dependencyStatus);
-            }
-        });
-    }
-
-    private void InitializeFirebase()
-    {
-        Debug.Log("Setting up Firebase Auth");
-        //Set the authentication instance object
-        auth = FirebaseAuth.DefaultInstance;       
-    }
 
     //Function for the register button
     public void RegisterStep1()
@@ -75,7 +44,6 @@ public class RegisterController : MonoBehaviour
 
         if ("" == userName.text || "" == castleName.text || "" == gender)
         {
-            Debug.Log("aquiiiiiii");
             //mostrar erro ao usuário
             alert.SetActive(true);
             alertMessage.text = "Todos os campos são obrigatórios!";
@@ -98,9 +66,7 @@ public class RegisterController : MonoBehaviour
             return;
         }        
                 
-        var result = args.Snapshot.Value as Dictionary<string, System.Object>;
-
-        Debug.Log(result.Count);          
+        var result = args.Snapshot.Value as Dictionary<string, System.Object>;      
 
         if(result.Count != 0)
         {  
@@ -123,16 +89,17 @@ public class RegisterController : MonoBehaviour
         alert.SetActive(false);
 
         //go to step two
-        step1.SetActive(false);
-        step2.SetActive(true);
+        CallStepsController.instance.CallRegisterStep2();
     }
 
     public void RegisterStep2()
     {  
         if(password.text != passwordConfirmation.text) 
         {
-            //mostrar erro ao usuário
             Debug.Log("As senhas não correspondem!");
+            //mostrar erro ao usuário
+            alert.SetActive(true);
+            alertMessage.text = "As senhas não correspondem!";
             return;
         }   
 
@@ -166,69 +133,37 @@ public class RegisterController : MonoBehaviour
 
         reference.Child("users").Child(userId).SetRawJsonValueAsync(json);
 
-        step1.SetActive(false);
-        step2.SetActive(false);
-        main.SetActive(true);
+        //go to main
+        CallStepsController.instance.CallMain();
+
     }
 
     public void GenderKing()
     {
-        kingUnpressedButton.SetActive(false);
-        kingPressedButton.SetActive(true);
-
-        queenPressedButton.SetActive(false);
-        queenUnpressedButton.SetActive(true);
         gender = "king";
+        GenderButtonActivities.instance.CallGenderKing();
     }
 
     public void GenderQueen()
-    {
-        queenUnpressedButton.SetActive(false);
-        queenPressedButton.SetActive(true);
-
-        kingPressedButton.SetActive(false);
-        kingUnpressedButton.SetActive(true);
+    {        
+        GenderButtonActivities.instance.CallGenderQueen();
         gender = "queen";
     }
 
     public void GenderKingPressed()
     {
-        kingUnpressedButton.SetActive(false);
-        kingPressedButton.SetActive(true);
-
-        queenPressedButton.SetActive(false);
-        queenUnpressedButton.SetActive(true);
+        GenderButtonActivities.instance.CallGenderKingPressed();
         gender = "king";
     }
 
     public void GenderQueenPressed()
     {
-        queenUnpressedButton.SetActive(false);
-        queenPressedButton.SetActive(true);
-
-        kingPressedButton.SetActive(false);
-        kingUnpressedButton.SetActive(true);
-
+        GenderButtonActivities.instance.CallGenderQueenPressed();
         gender = "queen";
-    }
-
-    public void CallRegisterStep1()
-    {
-        main.SetActive(false);
-        step1.SetActive(true);
-        step2.SetActive(false);
-    }
-
-    public void CallRegisterStep2()
-    {
-        step1.SetActive(false);
-        step2.SetActive(true);
     }
 
     public void CloseAlert()
     {
         alert.SetActive(false);
-    }
-
-    
+    }    
 }

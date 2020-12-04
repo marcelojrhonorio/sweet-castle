@@ -8,6 +8,20 @@ public class CallStepsController : MonoBehaviour
     public GameObject step1;
     public GameObject step2;
 
+    public static CallStepsController instance;
+
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+        }
+        else 
+        {
+            Destroy(gameObject);
+        }
+    } 
+
     public void CallRegisterStep1()
     {
         main.SetActive(false);
@@ -19,5 +33,12 @@ public class CallStepsController : MonoBehaviour
    {
        step1.SetActive(false);
        step2.SetActive(true);
+   }
+
+   public void CallMain()
+   {
+       step1.SetActive(false);
+       step2.SetActive(false);
+       main.SetActive(true);
    }
 }
