@@ -10,7 +10,7 @@ public class LoginController : MonoBehaviour
    //jogar método no onClick
    public void LoginButton()
    {
-       StartCoroutine(StartLogin("andrerodrigo22@gmail.com", "123456")); //mudar para Text TMPro
+       //StartCoroutine(StartLogin("andrerodrigo22@gmail.com", "123456")); //mudar para Text TMPro
    }
 
    private IEnumerator StartLogin(string email, string password)

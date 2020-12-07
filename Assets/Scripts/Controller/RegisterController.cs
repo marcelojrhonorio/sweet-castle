@@ -37,6 +37,58 @@ public class RegisterController : MonoBehaviour
     public string castleNameString;
     public string gender;
 
+    void Start()
+    {
+        //FirebaseDatabase.DefaultInstance.GetReference("users").OrderByChild("key").EqualTo(SystemInfo.deviceUniqueIdentifier).ValueChanged += HandleValueChanged;
+        FirebaseDatabase.DefaultInstance.GetReference("users").OrderByKey().EqualTo(SystemInfo.deviceUniqueIdentifier).ValueChanged += HandleValueChanged;
+        
+    }
+
+    void HandleValueChanged(object sender, ValueChangedEventArgs args) 
+    {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            return;
+        }
+
+        var result = args.Snapshot.Value as Dictionary<string, System.Object>;    
+        
+        if(result == null)
+        {  
+            User usuario = new User("default@email.com", "defaultNameUser", "defaultCastleName", "", ""); 
+            string json = JsonUtility.ToJson(usuario);
+
+            reference = FirebaseDatabase.DefaultInstance.RootReference;  
+
+            reference.Child("users").Child(SystemInfo.deviceUniqueIdentifier).SetRawJsonValueAsync(json);
+
+            //mostrar erro ao usuário
+            alert.SetActive(true);
+            alertMessage.text = "A key " + SystemInfo.deviceUniqueIdentifier + " foi registrada com sucesso.";
+            
+        } 
+        else 
+        {
+            alert.SetActive(false);
+
+            foreach (var item in result)
+            {
+                alert.SetActive(false);
+
+                if (("" != item.Key) && (item.Key == SystemInfo.deviceUniqueIdentifier)) 
+                {
+                    //mostrar erro ao usuário
+                    alert.SetActive(true);
+                    alertMessage.text = "A key " + SystemInfo.deviceUniqueIdentifier + " já está registrada.";
+                    return;
+                }
+            }
+        }
+
+        alert.SetActive(false);
+
+    }
+
     //Function for the register button
     public void RegisterStep1()
     {
@@ -55,11 +107,11 @@ public class RegisterController : MonoBehaviour
         userNameString = userName.text;
         castleNameString = castleName.text;
 
-        FirebaseDatabase.DefaultInstance.GetReference("users").OrderByChild("username").EqualTo(userName.text).ValueChanged += HandleValueChanged; 
+        //FirebaseDatabase.DefaultInstance.GetReference("users").OrderByChild("username").EqualTo(userName.text).ValueChanged += HandleValueChanged; 
         
     }
 
-    void HandleValueChanged(object sender, ValueChangedEventArgs args) 
+    /*void HandleValueChanged(object sender, ValueChangedEventArgs args) 
     {
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
@@ -90,11 +142,11 @@ public class RegisterController : MonoBehaviour
 
         //go to step two
         CallStepsController.instance.CallRegisterStep2();
-    }
+    }*/
 
     public void RegisterStep2()
     {  
-        if(password.text != passwordConfirmation.text) 
+        /*if(password.text != passwordConfirmation.text) 
         {
             Debug.Log("As senhas não correspondem!");
             //mostrar erro ao usuário
@@ -134,7 +186,7 @@ public class RegisterController : MonoBehaviour
         reference.Child("users").Child(userId).SetRawJsonValueAsync(json);
 
         //go to main
-        CallStepsController.instance.CallMain();
+        CallStepsController.instance.CallMain();*/        
 
     }
 
