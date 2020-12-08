@@ -1096,6 +1096,21 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1782040621748065706, guid: ac57c5adebbcbc44c88a54438e0396f1,
+        type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1782040621748065706, guid: ac57c5adebbcbc44c88a54438e0396f1,
+        type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 1080
+      objectReference: {fileID: 0}
+    - target: {fileID: 1782040621748065706, guid: ac57c5adebbcbc44c88a54438e0396f1,
+        type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 1920
+      objectReference: {fileID: 0}
     - target: {fileID: 1782040621748065707, guid: ac57c5adebbcbc44c88a54438e0396f1,
         type: 3}
       propertyPath: m_Camera
@@ -1172,6 +1187,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 648664535}
+    - target: {fileID: 5655997125331701056, guid: 3218ee04ee9525241940b47eadd09f35,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RegisterStep2
+      objectReference: {fileID: 0}
     - target: {fileID: 5655997126444597066, guid: 3218ee04ee9525241940b47eadd09f35,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1430,6 +1450,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Alert
+      objectReference: {fileID: 0}
+    - target: {fileID: 2325441551503246348, guid: b54d86559db1e46469203df7063657c4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5638653173027813745, guid: b54d86559db1e46469203df7063657c4,
         type: 3}

@@ -4,23 +4,14 @@ using UnityEngine;
 
 public class User
 {
-    public string email;
-    public string username;
-    public string castlename;
-    public string password;
-    public string gender;
+    public string currentLevel;
+    public string points;
+    public string createdAt;
 
-    public User()
+    public User(string currentLevel, string points, string createdAt)
     {
-
-    }
-
-    public User(string email, string username, string castlename, string password, string gender)
-    {
-        this.email = email;
-        this.username = username;
-        this.castlename = castlename;
-        this.password = password;
-        this.gender = gender;
+        this.currentLevel = currentLevel;
+        this.points = points;
+        this.createdAt = createdAt;
     }
 }

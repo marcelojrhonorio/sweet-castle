@@ -39,29 +39,54 @@ public class RegisterController : MonoBehaviour
 
     void Start()
     {
-        //FirebaseDatabase.DefaultInstance.GetReference("users").OrderByChild("key").EqualTo(SystemInfo.deviceUniqueIdentifier).ValueChanged += HandleValueChanged;
+        
+        //alertMessage.text = SystemInfo.deviceUniqueIdentifier;
         FirebaseDatabase.DefaultInstance.GetReference("users").OrderByKey().EqualTo(SystemInfo.deviceUniqueIdentifier).ValueChanged += HandleValueChanged;
         
+        
+    }
+
+    private void HandleServerTimeOffsetChanged(object sender, ValueChangedEventArgs e)
+    {
+        alertMessage.text = $"Offset: {e.Snapshot.Value}";
+        Debug.Log($"Offset: {e.Snapshot.Value}");
+    }
+
+    private void HandleConnectedChanged(object sender, ValueChangedEventArgs e)
+    {
+        alert.SetActive(true);
+        alertMessage.text = $"Connected: {e.Snapshot.Value}";
+        Debug.Log($"Connected: {e.Snapshot.Value}");
     }
 
     void HandleValueChanged(object sender, ValueChangedEventArgs args) 
     {
+        alert.SetActive(true);
+         alertMessage.text = "Fez a consulta.";
+/*
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             return;
         }
 
-        var result = args.Snapshot.Value as Dictionary<string, System.Object>;    
+        var result = args.Snapshot.Value as Dictionary<string, System.Object>;          
+        //var result = args.Snapshot.Value as Dictionary<string, User>;  
+
         
+                
         if(result == null)
         {  
-            User usuario = new User("default@email.com", "defaultNameUser", "defaultCastleName", "", ""); 
+            alert.SetActive(true);
+            alertMessage.text = "Criar usuário!";
+
+            User usuario = new User("0", "0", DateTime.Now.ToString()); 
             string json = JsonUtility.ToJson(usuario);
 
             reference = FirebaseDatabase.DefaultInstance.RootReference;  
 
             reference.Child("users").Child(SystemInfo.deviceUniqueIdentifier).SetRawJsonValueAsync(json);
 
+            Debug.Log("Registrada com sucesso");
             //mostrar erro ao usuário
             alert.SetActive(true);
             alertMessage.text = "A key " + SystemInfo.deviceUniqueIdentifier + " foi registrada com sucesso.";
@@ -69,23 +94,48 @@ public class RegisterController : MonoBehaviour
         } 
         else 
         {
-            alert.SetActive(false);
+            //alert.SetActive(false);
+            alert.SetActive(true);
+            alertMessage.text = "Usuário existente!";
 
             foreach (var item in result)
             {
-                alert.SetActive(false);
+                //alert.SetActive(false);
 
                 if (("" != item.Key) && (item.Key == SystemInfo.deviceUniqueIdentifier)) 
                 {
+                    
+                    var values = item.Value as Dictionary<string, System.Object>;
+                    
+                    string points = "";
+                    string currentLevel = "";
+                    string createdAt = "";
+                    
+                    foreach (var v in values)
+                    {
+                        if(v.Key == "points")
+                        {
+                            points = v.Value.ToString();
+                        } 
+                        else if(v.Key == "currentLevel")
+                        {
+                            currentLevel = v.Value.ToString();
+                        }
+                        else if(v.Key == "createdAt")
+                        {
+                            createdAt = v.Value.ToString();
+                        }
+                    }
+
                     //mostrar erro ao usuário
                     alert.SetActive(true);
-                    alertMessage.text = "A key " + SystemInfo.deviceUniqueIdentifier + " já está registrada.";
+                    alertMessage.text = $"O usuário criado em {createdAt} está no nível {currentLevel}, com {points} pontos.";
                     return;
                 }
             }
-        }
+        }*/
 
-        alert.SetActive(false);
+        //alert.SetActive(false);
 
     }
 
@@ -146,6 +196,12 @@ public class RegisterController : MonoBehaviour
 
     public void RegisterStep2()
     {  
+         //FirebaseDatabase.DefaultInstance.GetReference("users").OrderByKey().EqualTo(SystemInfo.deviceUniqueIdentifier).ValueChanged += HandleValueChanged;
+
+         FirebaseDatabase.DefaultInstance.GetReference(".info/connected").ValueChanged += HandleConnectedChanged;
+        FirebaseDatabase.DefaultInstance.GetReference(".info/serverTimeOffset").ValueChanged += HandleServerTimeOffsetChanged;
+
+
         /*if(password.text != passwordConfirmation.text) 
         {
             Debug.Log("As senhas não correspondem!");
